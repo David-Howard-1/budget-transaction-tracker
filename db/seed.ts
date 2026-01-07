@@ -23,6 +23,10 @@ export async function seedDb() {
       name: 'Personal',
       monthlyBudget: 150,
     },
+    {
+      name: 'Gas',
+      monthlyBudget: 180,
+    },
   ]);
 
   await db.insert(allowancesTable).values([

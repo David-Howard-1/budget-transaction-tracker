@@ -14,7 +14,7 @@ export const allowancesTable = sqliteTable('allowances', {
 
 export const transactionsTable = sqliteTable('transactions', {
   id: int().primaryKey({ autoIncrement: true }),
-  catogoryId: int()
+  categoryId: int()
     .references(() => categoriesTable.id)
     .notNull(),
   date: text().notNull(),

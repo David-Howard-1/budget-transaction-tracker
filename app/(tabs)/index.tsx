@@ -1,10 +1,7 @@
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { db } from '@/src';
-import { categories } from '@/db/schema';
 import { Image } from 'expo-image';
-import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
 export default function Dashboard() {

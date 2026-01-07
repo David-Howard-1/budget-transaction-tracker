@@ -17,6 +17,15 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
+        name="add-transaction"
+        options={{
+          title: 'Add Transaction',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="plus.circle" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
