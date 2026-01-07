@@ -1,36 +1,27 @@
 import { db } from '@/db';
 import { categoriesTable, transactionsTable } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
 
 export default function AddTransactionScreen() {
   const [amount, setAmount] = useState('');
-  const [category, setCategory] =
-    useState<typeof categoriesTable.$inferSelect>();
+  const [categoryId, setCategoryId] = useState<
+    (typeof categoriesTable.$inferSelect)['id'] | null
+  >(null);
   const [person, setPerson] = useState<'David' | 'Kayla' | 'Joint'>('David');
   const [paymentMethod, setPaymentMethod] = useState<
     'Credit - WF' | 'Credit - Chase' | 'Debit'
   >('Credit - WF');
   const [description, setDescription] = useState('');
-  const [categories, setCategories] = useState<
-    (typeof categoriesTable.$inferSelect)[]
-  >([]);
-
-  useEffect(() => {
-    (async () => {
-      const rows = await db.select().from(categoriesTable);
-      setCategories(rows);
-      setCategory(rows[0]);
-    })();
-  }, []);
+  const { data: categories } = useLiveQuery(db.select().from(categoriesTable));
 
   async function handleSave() {
-    if (!amount || !category) return;
+    if (!amount || !categoryId) return;
 
     const inserted = await db.insert(transactionsTable).values({
-      categoryId: category.id,
+      categoryId: categoryId,
       date: new Date().toISOString(),
       amount: Math.round(Number(amount) * 100), // cents
       person,
@@ -72,8 +63,8 @@ export default function AddTransactionScreen() {
         <Button
           key={c.id}
           title={c.name}
-          onPress={() => setCategory(c)}
-          color={category?.id === c.id ? 'green' : undefined}
+          onPress={() => setCategoryId(c.id)}
+          color={categoryId === c.id ? 'green' : undefined}
         />
       ))}
 
