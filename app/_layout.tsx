@@ -9,7 +9,6 @@ import 'react-native-reanimated';
 
 import { db } from '@/db';
 import { allowancesTable, categoriesTable } from '@/db/schema';
-import { seedDb } from '@/db/seed';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { useEffect, useState } from 'react';
@@ -31,12 +30,12 @@ export default function RootLayout() {
     if (!success) return;
 
     (async () => {
-      // delete categories and allowances
-      await db.delete(categoriesTable);
-      await db.delete(allowancesTable);
+      // // delete categories and allowances
+      // await db.delete(categoriesTable);
+      // await db.delete(allowancesTable);
 
-      // Re-seed categories and allowances
-      await seedDb();
+      // // Re-seed categories and allowances
+      // await seedDb();
 
       // Get from db
       const categoriesRows = await db.select().from(categoriesTable);
