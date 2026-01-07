@@ -10,8 +10,9 @@ import 'react-native-reanimated';
 import { db } from '@/db';
 import { allowancesTable, categoriesTable } from '@/db/schema';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
 import migrations from '../drizzle/migrations';
 
 export const unstable_settings = {
@@ -20,32 +21,24 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
-  const [categories, setCategories] =
-    useState<(typeof categoriesTable.$inferSelect)[]>();
-  const [allowances, setAllowances] =
-    useState<(typeof allowancesTable.$inferSelect)[]>();
   const colorScheme = useColorScheme();
 
-  useEffect(() => {
-    if (!success) return;
+  const { data: categories } = useLiveQuery(db.select().from(categoriesTable));
+  const { data: allowances } = useLiveQuery(db.select().from(allowancesTable));
 
-    (async () => {
-      // // delete categories and allowances
-      // await db.delete(categoriesTable);
-      // await db.delete(allowancesTable);
+  if (error) {
+    return (
+      <View style={{ padding: 40, paddingTop: 100 }}>
+        <Text style={{ color: 'white' }}>Migration error: {error.message}</Text>
+      </View>
+    );
+  }
 
-      // // Re-seed categories and allowances
-      // await seedDb();
-
-      // Get from db
-      const categoriesRows = await db.select().from(categoriesTable);
-      const allowancesRows = await db.select().from(allowancesTable);
-
-      // Set rows in state
-      setCategories(categoriesRows);
-      setAllowances(allowancesRows);
-    })();
-  }, [success]);
+  console.log(
+    'Categories: ' + JSON.stringify(categories, null, 4),
+    '\n\n',
+    'Allowances: ' + JSON.stringify(allowances, null, 4)
+  );
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

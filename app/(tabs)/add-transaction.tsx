@@ -1,5 +1,6 @@
 import { db } from '@/db';
 import { categoriesTable, transactionsTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
@@ -37,9 +38,14 @@ export default function AddTransactionScreen() {
       paymentMethod,
     });
 
-    console.log(inserted);
+    const insertedTransaction = await db
+      .select()
+      .from(transactionsTable)
+      .where(eq(transactionsTable.id, inserted.lastInsertRowId));
 
-    router.back();
+    console.log(JSON.stringify(insertedTransaction, null, 4));
+
+    // router.back();
   }
 
   return (
